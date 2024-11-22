@@ -1,9 +1,12 @@
 package service
 
-import "order_app/internal/persistence/repository"
+import (
+	"order_app/internal/model"
+	"order_app/internal/persistence/repository"
+)
 
 type UserService interface {
-	CreateAccount()
+	CreateAccount(createUserDTO *model.CreateUserDTO) *model.UserDetail
 }
 
 type userService struct {
@@ -16,6 +19,6 @@ func NewUserService(userRepo repository.UserRepo) UserService {
 	}
 }
 
-func (us *userService) CreateAccount() {
-	us.userRepo.CreateUser()
+func (us *userService) CreateAccount(createUserDTO *model.CreateUserDTO) *model.UserDetail {
+	return us.userRepo.CreateUser(createUserDTO)
 }

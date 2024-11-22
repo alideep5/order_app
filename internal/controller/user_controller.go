@@ -1,9 +1,12 @@
 package controller
 
-import "order_app/internal/service"
+import (
+	"order_app/internal/model"
+	"order_app/internal/service"
+)
 
 type UserController interface {
-	CreateAccount()
+	CreateAccount(createUserDTO *model.CreateUserDTO) *model.UserDetail
 }
 
 type userController struct {
@@ -16,6 +19,6 @@ func NewUserController(userService service.UserService) UserController {
 	}
 }
 
-func (uc *userController) CreateAccount() {
-	uc.userService.CreateAccount()
+func (uc *userController) CreateAccount(createUserDTO *model.CreateUserDTO) *model.UserDetail {
+	return uc.userService.CreateAccount(createUserDTO)
 }
