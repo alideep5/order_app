@@ -1,0 +1,1 @@
+go run -tags '!wireinject' cmd/main.go
