@@ -1,12 +1,16 @@
 package controller
 
 import (
+	"net/http"
 	"order_app/internal/model"
 	"order_app/internal/service"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 )
 
 type UserController interface {
-	CreateAccount(createUserDTO *model.CreateUserDTO) *model.UserDetail
+	RegisterRoutes(r *gin.Engine)
 }
 
 type userController struct {
@@ -19,6 +23,26 @@ func NewUserController(userService service.UserService) UserController {
 	}
 }
 
-func (uc *userController) CreateAccount(createUserDTO *model.CreateUserDTO) *model.UserDetail {
-	return uc.userService.CreateAccount(createUserDTO)
+func (uc *userController) RegisterRoutes(r *gin.Engine) {
+	r.POST("/user", uc.createAccount)
+}
+
+func (uc *userController) createAccount(c *gin.Context) {
+	var userDetail model.CreateUserDTO
+
+	if err := c.ShouldBindJSON(&userDetail); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	validate := validator.New()
+
+	if err := validate.Struct(userDetail); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	newUser := uc.userService.CreateAccount(&userDetail)
+
+	c.JSON(http.StatusOK, newUser)
 }
